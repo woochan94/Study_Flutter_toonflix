@@ -17,14 +17,20 @@ class _HomeScreenState extends State<HomeScreen> {
   bool isRunning = false;
   int totalPomodoros = 0;
 
+  void onReset({isEnd = bool}) {
+    setState(() {
+      if (isEnd) {
+        totalPomodoros += 1;
+      }
+      isRunning = false;
+      totalSeconds = TOTAL_SECONDS;
+    });
+    timer.cancel();
+  }
+
   void onTick(Timer timer) {
     if (totalSeconds == 0) {
-      setState(() {
-        totalPomodoros += 1;
-        isRunning = false;
-        totalSeconds = TOTAL_SECONDS;
-      });
-      timer.cancel();
+      onReset(isEnd: true);
     } else {
       setState(() {
         totalSeconds -= 1;
@@ -44,6 +50,10 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isRunning = false;
     });
+  }
+
+  void onResetPressed() {
+    onReset(isEnd: false);
   }
 
   String format(int seconds) {
@@ -74,13 +84,29 @@ class _HomeScreenState extends State<HomeScreen> {
           Flexible(
             flex: 2,
             child: Center(
-              child: IconButton(
-                icon: Icon(isRunning
-                    ? Icons.pause_circle_outline
-                    : Icons.play_circle_outline),
-                iconSize: 100,
-                color: Theme.of(context).cardColor,
-                onPressed: isRunning ? onPausePressed : onStartPressed,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(isRunning
+                        ? Icons.pause_circle_outline
+                        : Icons.play_circle_outline),
+                    iconSize: 100,
+                    color: Theme.of(context).cardColor,
+                    onPressed: isRunning ? onPausePressed : onStartPressed,
+                  ),
+                  TextButton(
+                    onPressed: onResetPressed,
+                    child: Text(
+                      'Reset',
+                      style: TextStyle(
+                        color: Theme.of(context).cardColor,
+                        fontSize: 18,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
