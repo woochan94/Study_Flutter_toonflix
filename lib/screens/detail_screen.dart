@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toonflix/models/webtoon_detail_model.dart';
 import 'package:toonflix/models/webtoon_episode_model.dart';
 import 'package:toonflix/models/webtoon_model.dart';
@@ -15,14 +16,49 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  static const STORAGE_KEY = 'likedToons';
+
   late Future<WebtoonDetailModel> webtoon;
   late Future<List<WebtoonEpisodeModel>> episodes;
+  late SharedPreferences prefs;
+  bool isLiked = false;
+
+  Future initPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+    final likedToons = prefs.getStringList(STORAGE_KEY);
+    if (likedToons != null) {
+      if (likedToons.contains(widget.webtoon.id) == true) {
+        isLiked = true;
+        setState(() {
+          isLiked = true;
+        });
+      }
+    } else {
+      await prefs.setStringList(STORAGE_KEY, []);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
     webtoon = ApiService.getToonById(widget.webtoon.id);
     episodes = ApiService.getLatestEpisodeById(widget.webtoon.id);
+    initPrefs();
+  }
+
+  onHeartTap() async {
+    final likedToons = prefs.getStringList(STORAGE_KEY);
+    if (likedToons != null) {
+      if (isLiked) {
+        likedToons.remove(widget.webtoon.id);
+      } else {
+        likedToons.add(widget.webtoon.id);
+      }
+      await prefs.setStringList(STORAGE_KEY, likedToons);
+      setState(() {
+        isLiked = !isLiked;
+      });
+    }
   }
 
   @override
@@ -39,6 +75,16 @@ class _DetailScreenState extends State<DetailScreen> {
         ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.green,
+        actions: [
+          IconButton(
+            onPressed: onHeartTap,
+            icon: Icon(
+              isLiked
+                  ? Icons.favorite_outlined
+                  : Icons.favorite_outline_outlined,
+            ),
+          ),
+        ],
         elevation: 1,
       ),
       body: FutureBuilder(
