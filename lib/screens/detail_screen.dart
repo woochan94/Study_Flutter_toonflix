@@ -4,6 +4,7 @@ import 'package:toonflix/models/webtoon_detail_model.dart';
 import 'package:toonflix/models/webtoon_episode_model.dart';
 import 'package:toonflix/models/webtoon_model.dart';
 import 'package:toonflix/services/api_service.dart';
+import 'package:toonflix/widgets/appbar_widget.dart';
 import 'package:toonflix/widgets/detail_list_header_widget.dart';
 import 'package:toonflix/widgets/episode_widget.dart';
 
@@ -65,16 +66,10 @@ class _DetailScreenState extends State<DetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: Text(
-          widget.webtoon.title,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.green,
+      appBar: MyAppBar(
+        title: widget.webtoon.title,
+        appBar: AppBar(),
+        centerTitle: false,
         actions: [
           IconButton(
             onPressed: onHeartTap,
@@ -85,7 +80,6 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
           ),
         ],
-        elevation: 1,
       ),
       body: FutureBuilder(
         future: episodes,

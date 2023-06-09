@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:toonflix/models/webtoon_model.dart';
 import 'package:toonflix/services/api_service.dart';
+import 'package:toonflix/widgets/appbar_widget.dart';
 import 'package:toonflix/widgets/weboon_widge.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,17 +13,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          "오늘의 웹툰",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.green,
-        elevation: 1,
+      appBar: MyAppBar(
+        appBar: AppBar(),
+        title: '오늘의 웹툰',
       ),
       body: FutureBuilder(
         future: webtoons,
