@@ -12,49 +12,40 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey.shade900,
       appBar: MyAppBar(
         appBar: AppBar(),
         title: '오늘의 웹툰',
       ),
-      body: FutureBuilder(
-        future: webtoons,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Column(
-              children: [
-                const SizedBox(
-                  height: 50,
+      body: SafeArea(
+        child: FutureBuilder(
+          future: webtoons,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return GridView.builder(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 15,
+                  vertical: 40,
                 ),
-                Expanded(
-                  child: makeList(snapshot),
+                physics: const ClampingScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: (1 / 1.6),
                 ),
-              ],
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-    );
-  }
-
-  ListView makeList(AsyncSnapshot<List<WebtoonModel>> snapshot) {
-    return ListView.separated(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 10,
-      ),
-      itemCount: snapshot.data!.length,
-      itemBuilder: (context, index) {
-        var webtoon = snapshot.data![index];
-        return Webtoon(webtoon: webtoon);
-      },
-      separatorBuilder: (context, index) => const SizedBox(
-        width: 40,
+                itemCount: snapshot.data!.length,
+                itemBuilder: (context, index) {
+                  var webtoon = snapshot.data![index];
+                  return Webtoon(webtoon: webtoon);
+                },
+              );
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
       ),
     );
   }
